@@ -220,7 +220,7 @@ func NewStandardBuilderTag(ifdPath string, it *IndexedTag, byteOrder binary.Byte
 type IfdBuilder struct {
 	ifdIdentity *exifcommon.IfdIdentity
 
-	byteOrder binary.ByteOrder
+	ByteOrder binary.ByteOrder
 
 	// Includes both normal tags and IFD tags (which point to child IFDs).
 	// TODO(dustin): Keep a separate list of children like with `Ifd`.
@@ -246,7 +246,7 @@ func NewIfdBuilder(ifdMapping *exifcommon.IfdMapping, tagIndex *TagIndex, ii *ex
 	ib = &IfdBuilder{
 		ifdIdentity: ii,
 
-		byteOrder: byteOrder,
+		ByteOrder: byteOrder,
 		tags:      make([]*BuilderTag, 0),
 
 		ifdMapping: ifdMapping,
@@ -262,7 +262,7 @@ func NewIfdBuilderWithExistingIfd(ifd *Ifd) (ib *IfdBuilder) {
 	ib = &IfdBuilder{
 		ifdIdentity: ifd.IfdIdentity(),
 
-		byteOrder:      ifd.ByteOrder(),
+		ByteOrder:      ifd.ByteOrder(),
 		existingOffset: ifd.Offset(),
 		ifdMapping:     ifd.ifdMapping,
 		tagIndex:       ifd.tagIndex,
@@ -380,7 +380,7 @@ func getOrCreateIbFromRootIbInner(rootIb *IfdBuilder, parentIb *IfdBuilder, curr
 			// non-FQ IFD-path as the current IB.
 
 			iiSibling := thisIb.IfdIdentity().NewSibling(i + 1)
-			thisIb.nextIb = NewIfdBuilder(thisIb.ifdMapping, thisIb.tagIndex, iiSibling, thisIb.byteOrder)
+			thisIb.nextIb = NewIfdBuilder(thisIb.ifdMapping, thisIb.tagIndex, iiSibling, thisIb.ByteOrder)
 		}
 
 		thisIb = thisIb.nextIb
@@ -427,7 +427,7 @@ func getOrCreateIbFromRootIbInner(rootIb *IfdBuilder, parentIb *IfdBuilder, curr
 				thisIb.ifdMapping,
 				thisIb.tagIndex,
 				iiChild,
-				thisIb.byteOrder)
+				thisIb.ByteOrder)
 
 		err = thisIb.AddChildIb(foundChild)
 		log.PanicIf(err)
@@ -511,7 +511,7 @@ func (ib *IfdBuilder) SetThumbnail(data []byte) (err error) {
 			ThumbnailOffsetTagId,
 			exifcommon.TypeLong,
 			ibtvfb,
-			ib.byteOrder)
+			ib.ByteOrder)
 
 	err = ib.Set(offsetBt)
 	log.PanicIf(err)
@@ -519,7 +519,7 @@ func (ib *IfdBuilder) SetThumbnail(data []byte) (err error) {
 	thumbnailSizeIt, err := ib.tagIndex.Get(ib.IfdIdentity(), ThumbnailSizeTagId)
 	log.PanicIf(err)
 
-	sizeBt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), thumbnailSizeIt, ib.byteOrder, []uint32{uint32(len(ib.thumbnailData))})
+	sizeBt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), thumbnailSizeIt, ib.ByteOrder, []uint32{uint32(len(ib.thumbnailData))})
 
 	err = ib.Set(sizeBt)
 	log.PanicIf(err)
@@ -950,8 +950,8 @@ func (ib *IfdBuilder) AddChildIb(childIb *IfdBuilder) (err error) {
 
 	if childIb.IfdIdentity().TagId() == 0 {
 		log.Panicf("IFD can not be used as a child IFD (not associated with a tag-ID): %v", childIb)
-	} else if childIb.byteOrder != ib.byteOrder {
-		log.Panicf("Child IFD does not have the same byte-order: [%s] != [%s]", childIb.byteOrder, ib.byteOrder)
+	} else if childIb.ByteOrder != ib.ByteOrder {
+		log.Panicf("Child IFD does not have the same byte-order: [%s] != [%s]", childIb.ByteOrder, ib.ByteOrder)
 	}
 
 	// Since no standard IFDs supports occur`ring more than once, check that a
@@ -1086,7 +1086,7 @@ func (ib *IfdBuilder) AddTagsFromExisting(ifd *Ifd, includeTagIds []uint16, excl
 				ite.TagId(),
 				ite.TagType(),
 				value,
-				ib.byteOrder)
+				ib.ByteOrder)
 		}
 
 		err := ib.add(bt)
@@ -1108,7 +1108,7 @@ func (ib *IfdBuilder) AddStandard(tagId uint16, value interface{}) (err error) {
 	it, err := ib.tagIndex.Get(ib.IfdIdentity(), tagId)
 	log.PanicIf(err)
 
-	bt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), it, ib.byteOrder, value)
+	bt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), it, ib.ByteOrder, value)
 
 	err = ib.add(bt)
 	log.PanicIf(err)
@@ -1129,7 +1129,7 @@ func (ib *IfdBuilder) AddStandardWithName(tagName string, value interface{}) (er
 	it, err := ib.tagIndex.GetWithName(ib.IfdIdentity(), tagName)
 	log.PanicIf(err)
 
-	bt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), it, ib.byteOrder, value)
+	bt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), it, ib.ByteOrder, value)
 
 	err = ib.add(bt)
 	log.PanicIf(err)
@@ -1151,7 +1151,7 @@ func (ib *IfdBuilder) SetStandard(tagId uint16, value interface{}) (err error) {
 	it, err := ib.tagIndex.Get(ib.IfdIdentity(), tagId)
 	log.PanicIf(err)
 
-	bt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), it, ib.byteOrder, value)
+	bt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), it, ib.ByteOrder, value)
 
 	i, err := ib.Find(tagId)
 	if err != nil {
@@ -1182,7 +1182,7 @@ func (ib *IfdBuilder) SetStandardWithName(tagName string, value interface{}) (er
 	it, err := ib.tagIndex.GetWithName(ib.IfdIdentity(), tagName)
 	log.PanicIf(err)
 
-	bt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), it, ib.byteOrder, value)
+	bt := NewStandardBuilderTag(ib.IfdIdentity().UnindexedString(), it, ib.ByteOrder, value)
 
 	i, err := ib.Find(bt.tagId)
 	if err != nil {

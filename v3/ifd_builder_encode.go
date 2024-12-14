@@ -321,7 +321,7 @@ func (ibe *IfdByteEncoder) encodeIfdToBytes(ib *IfdBuilder, ifdAddressableOffset
 	tableSize = ibe.TableSize(len(ib.tags))
 
 	b := new(bytes.Buffer)
-	bw := NewByteWriter(b, ib.byteOrder)
+	bw := NewByteWriter(b, ib.ByteOrder)
 
 	// Write tag count.
 	err = bw.WriteUint16(uint16(len(ib.tags)))
@@ -519,7 +519,7 @@ func (ibe *IfdByteEncoder) EncodeToExif(ib *IfdBuilder) (data []byte, err error)
 
 	b := new(bytes.Buffer)
 
-	headerBytes, err := BuildExifHeader(ib.byteOrder, ExifDefaultFirstIfdOffset)
+	headerBytes, err := BuildExifHeader(ib.ByteOrder, ExifDefaultFirstIfdOffset)
 	log.PanicIf(err)
 
 	_, err = b.Write(headerBytes)
