@@ -1,6 +1,6 @@
-module github.com/dsoprea/go-exif/v2
+module github.com/glycerine/go-exif/v2
 
-go 1.13
+go 1.23
 
 // Development only
 // replace github.com/dsoprea/go-logging => ../../go-logging

@@ -1,6 +1,6 @@
-module github.com/dsoprea/go-exif
+module github.com/glycerine/go-exif
 
-go 1.13
+go 1.23
 
 require (
 	github.com/dsoprea/go-logging v0.0.0-20190624164917-c4f10aab7696

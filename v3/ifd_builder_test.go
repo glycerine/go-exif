@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dsoprea/go-exif/v3/common"
-	"github.com/dsoprea/go-exif/v3/undefined"
+	"github.com/glycerine/go-exif/v3/common"
+	"github.com/glycerine/go-exif/v3/undefined"
 	"github.com/dsoprea/go-logging"
 )
 

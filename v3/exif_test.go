@@ -13,7 +13,7 @@ import (
 
 	"github.com/dsoprea/go-logging"
 
-	"github.com/dsoprea/go-exif/v3/common"
+	"github.com/glycerine/go-exif/v3/common"
 )
 
 func TestVisit(t *testing.T) {

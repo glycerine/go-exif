@@ -14,8 +14,8 @@ import (
 
 	"github.com/dsoprea/go-logging"
 
-	"github.com/dsoprea/go-exif/v2/common"
-	"github.com/dsoprea/go-exif/v2/undefined"
+	"github.com/glycerine/go-exif/v2/common"
+	"github.com/glycerine/go-exif/v2/undefined"
 )
 
 var (
