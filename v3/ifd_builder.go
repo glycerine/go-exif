@@ -106,7 +106,7 @@ type BuilderTag struct {
 
 	// byteOrder is the byte order. It's chiefly/originally here to support
 	// printing the value.
-	byteOrder binary.ByteOrder
+	ByteOrder binary.ByteOrder
 }
 
 func NewBuilderTag(ifdPath string, tagId uint16, typeId exifcommon.TagTypePrimitive, value *IfdBuilderTagValue, byteOrder binary.ByteOrder) *BuilderTag {
@@ -115,7 +115,7 @@ func NewBuilderTag(ifdPath string, tagId uint16, typeId exifcommon.TagTypePrimit
 		tagId:     tagId,
 		typeId:    typeId,
 		value:     value,
-		byteOrder: byteOrder,
+		ByteOrder: byteOrder,
 	}
 }
 
@@ -138,7 +138,7 @@ func (bt *BuilderTag) String() string {
 	if bt.value.IsBytes() == true {
 		var err error
 
-		valueString, err = exifcommon.FormatFromBytes(bt.value.Bytes(), bt.typeId, false, bt.byteOrder)
+		valueString, err = exifcommon.FormatFromBytes(bt.value.Bytes(), bt.typeId, false, bt.ByteOrder)
 		log.PanicIf(err)
 	} else {
 		valueString = fmt.Sprintf("%v", bt.value)
@@ -478,13 +478,13 @@ func (ib *IfdBuilder) Tags() (tags []*BuilderTag) {
 //
 // NOTES:
 //
-// - We don't manage any facet of the thumbnail data. This is the
-//   responsibility of the user/developer.
-// - This method will fail unless the thumbnail is set on a the root IFD.
-//   However, in order to be valid, it must be set on the second one, linked to
-//   by the first, as per the EXIF/TIFF specification.
-// - We set the offset to (0) now but will allocate the data and properly assign
-//   the offset when the IB is encoded (later).
+//   - We don't manage any facet of the thumbnail data. This is the
+//     responsibility of the user/developer.
+//   - This method will fail unless the thumbnail is set on a the root IFD.
+//     However, in order to be valid, it must be set on the second one, linked to
+//     by the first, as per the EXIF/TIFF specification.
+//   - We set the offset to (0) now but will allocate the data and properly assign
+//     the offset when the IB is encoded (later).
 func (ib *IfdBuilder) SetThumbnail(data []byte) (err error) {
 	defer func() {
 		if state := recover(); state != nil {
